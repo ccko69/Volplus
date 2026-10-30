@@ -2,7 +2,7 @@ plugins {
   // AGP 9.0+ has built-in Kotlin support, so the separate kotlin.android plugin is no longer needed.
   // However, the Compose Compiler plugin is still required for Compose to work.
   id("com.android.application")
-  id("org.jetbrains.kotlin.plugin.compose") version "2.1.0" // MUST match your Kotlin version
+  id("org.jetbrains.kotlin.plugin.compose") version "2.1.0"
 }
 
 android {
@@ -19,8 +19,8 @@ android {
 
   buildTypes {
     getByName("debug") {
-      isMinifyEnabled = true
-      isShrinkResources = true
+      isMinifyEnabled = false
+      isShrinkResources = false
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
     // Added release build type (no signing config, so it won't fail in CI)
@@ -34,7 +34,7 @@ android {
   buildFeatures {
     viewBinding = true
     buildConfig = true
-    compose = true // <-- THIS ENABLES COMPOSE
+    compose = true
   }
 
   compileOptions {
