@@ -13,6 +13,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -206,7 +207,15 @@ private fun VolumePanel(
           volumes = volumes + (streams[0].primary to newValue)
         },
       )
-      if (expanded) {
+      AnimatedVisibility(
+        visible = expanded,
+        // Fade and move the extra controls without animating the panel's height.
+        // This keeps the transition lightweight and avoids the previous resize jank.
+        enter = fadeIn(animationSpec = tween(140)) +
+          slideInVertically(animationSpec = tween(140)) { it / 6 },
+        exit = fadeOut(animationSpec = tween(110)) +
+          slideOutVertically(animationSpec = tween(110)) { it / 6 },
+      ) {
         Column {
           Spacer(Modifier.height(4.dp))
           streams.drop(1).forEach { stream ->
@@ -353,6 +362,6 @@ internal fun volumePercentage(volume: Int, maxVolume: Int): Int {
   if (maxVolume <= 0) return 0
   val clampedVolume = volume.coerceIn(0, maxVolume).toLong()
   val maximum = maxVolume.toLong()
-  // Ceiling labels give the requested 7%, 7%, 6% progression for 15 native intervals.
-  return ((clampedVolume * 100L + maximum - 1L) / maximum).toInt()
+  // Floor labels give the requested 6%, 7%, 7% progression for 15 native intervals.
+  return ((clampedVolume * 100L) / maximum).toInt()
 }
