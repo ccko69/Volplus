@@ -13,7 +13,7 @@ jobs:
   build:
     name: build vol+
     runs-on: ubuntu-latest
-
+    environment: volplus-release-key
     env:
       RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
       RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
