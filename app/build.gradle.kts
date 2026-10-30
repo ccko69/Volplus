@@ -16,13 +16,9 @@ android {
     versionName = "0.43"
   }
   buildTypes {
-    getByName("release") {
-      signingConfig = signingConfigs.getByName("release")
-      isMinifyEnabled = true
-      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-    }
     getByName("debug") {
       isMinifyEnabled = true
+      isShrinkResources = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
   }
