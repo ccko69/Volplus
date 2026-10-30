@@ -17,20 +17,46 @@ android {
     versionName = "0.43"
   }
 
-  buildTypes {
-    getByName("debug") {
-      isMinifyEnabled = false
-      isShrinkResources = false
-      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-    }
-    // Added release build type (no signing config, so it won't fail in CI)
-    getByName("release") {
-      isMinifyEnabled = true
-      isShrinkResources = true
-      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-    }
-  }
+    // Release signing is configured only when credentials are supplied through
+    val releaseStoreFile = providers.environmentVariable("RELEASE_STORE_FILE").orNull
+    val releaseStorePassword = providers.environmentVariable("RELEASE_STORE_PASSWORD").orNull
+    val releaseKeyAlias = providers.environmentVariable("RELEASE_KEY_ALIAS").orNull
+    val releaseKeyPassword = providers.environmentVariable("RELEASE_KEY_PASSWORD").orNull
+    val hasReleaseSigning = listOf(
+        releaseStoreFile,
+        releaseStorePassword,
+        releaseKeyAlias,
+        releaseKeyPassword,
+    ).all { !it.isNullOrBlank() }
 
+    if (hasReleaseSigning) {
+        signingConfigs {
+            create("release") {
+                storeFile = file(releaseStoreFile!!)
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        getByName("debug") {
+            isMinifyEnabled = false
+        }
+        getByName("release") {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
+        }
+    }
+    
   buildFeatures {
     viewBinding = true
     buildConfig = true
