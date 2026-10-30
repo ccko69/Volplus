@@ -6,7 +6,7 @@ plugins {
 
 android {
   namespace = "ccko.volplus"
-  compileSdk = 36
+  compileSdk = 37
 
   defaultConfig {
     applicationId = "ccko.volplus"
