@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="volume_panel">#CC000000</color>
+    <color name="volume_accent">#FF900020</color>
+    <color name="volume_accent_light">#FFB00020</color>
+</resources>
