@@ -7,7 +7,7 @@ android {
   compileSdk = 37
   defaultConfig {
     applicationId = "ccko.volplus"
-    minSdk = 30
+    minSdk = 24
     targetSdk = 34
     versionCode = 43
     versionName = "0.43"
