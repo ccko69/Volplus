@@ -17,13 +17,32 @@ android {
     versionName = "0.43"
   }
 
+    // Release signing is configured only when credentials are supplied through
+    val releaseStoreFile = providers.environmentVariable("RELEASE_STORE_FILE").orNull
+    val releaseStorePassword = providers.environmentVariable("RELEASE_STORE_PASSWORD").orNull
+    val releaseKeyAlias = providers.environmentVariable("RELEASE_KEY_ALIAS").orNull
+    val releaseKeyPassword = providers.environmentVariable("RELEASE_KEY_PASSWORD").orNull
+    val hasReleaseSigning = listOf(
+        releaseStoreFile,
+        releaseStorePassword,
+        releaseKeyAlias,
+        releaseKeyPassword,
+    ).all { !it.isNullOrBlank() }
+
+    if (hasReleaseSigning) {
+        signingConfigs {
+            create("release") {
+                storeFile = file(releaseStoreFile!!)
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         getByName("debug") {
-            isMinifyEnabled = true
-proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+            isMinifyEnabled = false
         }
         getByName("release") {
             isMinifyEnabled = true
@@ -32,6 +51,9 @@ proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
     
