@@ -36,9 +36,9 @@ android {
 
 dependencies {
   implementation("androidx.activity:activity-compose:1.13.0")
-  implementation("androidx.compose.material3:material3:1.5.0-beta01")
-  implementation("androidx.compose.ui:ui:1.13.0-beta01")
-  implementation("androidx.compose.foundation:foundation:1.13.0-beta01")
+  implementation("androidx.compose.material3:material3:1.4.0")
+  implementation("androidx.compose.ui:ui:1.12.1")
+  implementation("androidx.compose.foundation:foundation:1.12.1")
   implementation("org.jetbrains.compose.components:components-resources:1.11.1")
   implementation("org.jetbrains.kotlin:kotlin-stdlib:2.4.21")
 }
