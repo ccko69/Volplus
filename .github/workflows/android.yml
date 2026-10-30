@@ -5,12 +5,21 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
+    
+permissions:
+  contents: read
+  
 jobs:
   build:
     name: build vol+
     runs-on: ubuntu-latest
-    
+
+    env:
+      RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+      RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
+      RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+      RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+      
     steps:
     - uses: actions/checkout@v4
     - name: set up JDK 17
@@ -24,21 +33,35 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
       
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Set up Gradle
+      uses: gradle/actions/setup-gradle@v4
+
     - name: Build debug APK
       run: ./gradlew --no-daemon --stacktrace assembleDebug
 
     - name: Upload debug APK
       uses: actions/upload-artifact@v4
       with:
-        name: volplus-debug-apk
-        path: app/build/outputs/apk/debug/*.apk
-        if-no-files-found: error
-        retention-days: 14
-          
+          name: volplus-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14
+
+    - name: Decode release keystore
+      if: ${{ env.RELEASE_KEYSTORE_BASE64 != '' && env.RELEASE_STORE_PASSWORD != '' && env.RELEASE_KEY_ALIAS != '' && env.RELEASE_KEY_PASSWORD != '' }}
+      run: |
+          echo "$RELEASE_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/volplus-release.jks"
+          echo "RELEASE_STORE_FILE=$RUNNER_TEMP/volplus-release.jks" >> "$GITHUB_ENV"
+
     - name: Build signed release APK
+      if: ${{ env.RELEASE_KEYSTORE_BASE64 != '' && env.RELEASE_STORE_PASSWORD != '' && env.RELEASE_KEY_ALIAS != '' && env.RELEASE_KEY_PASSWORD != '' }}
       run: ./gradlew --no-daemon --stacktrace assembleRelease
 
     - name: Upload release APK
+      if: ${{ env.RELEASE_KEYSTORE_BASE64 != '' && env.RELEASE_STORE_PASSWORD != '' && env.RELEASE_KEY_ALIAS != '' && env.RELEASE_KEY_PASSWORD != '' }}
       uses: actions/upload-artifact@v4
       with:
           name: volplus-release-apk
