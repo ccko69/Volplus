@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build:
-
+  name: build vol+
     runs-on: ubuntu-latest
     env:
       RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
