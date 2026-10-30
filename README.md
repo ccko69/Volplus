@@ -24,4 +24,4 @@ Vol+ provides quick access to the device's main audio streams without opening th
 
 ## Requirements
 
-- Android 11 (API 30) or later.
+- API 24 or later.
